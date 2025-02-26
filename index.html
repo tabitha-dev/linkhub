@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tabitha | LinkHub</title>
+    <link rel="stylesheet" href="style.css">
+<script defer src="script.js"></script>
+
+
+</head>
+
+<body>
+
+    <div id="particles-js"></div>
+
+    <div class="container hidden">
+        <button id="toggle-mode">🌙</button>
+        <img src="https://avatars.githubusercontent.com/tabitha-dev" alt="Tabitha Profile Picture" class="avatar">
+
+        <h1 id="greeting">Hello!</h1>
+        <p id="date"></p> <!-- Dynamic Date Display -->
+        <p>Software Developer | IEEE Member | Open Source Contributor</p>
+
+        <div class="links">
+            <a href="https://code.tabitha.dev/" target="_blank" class="btn">🌍 Portfolio</a>
+            <a href="https://code.tabitha.dev/code/index.html" target="_blank" class="btn">💻 More Projects</a>
+            <a href="https://github.com/tabitha-dev" target="_blank" class="btn">📂 GitHub</a>
+            <a href="https://www.linkedin.com/in/tabitha-dev/" target="_blank" class="btn">🔗 LinkedIn</a>
+            <a href="https://codepen.io/tabitha-dev" target="_blank" class="btn">✏️ CodePen</a>
+        </div>
+
+        <p class="email">📩 <a href="mailto:tabitha@ieee.org">tabitha@ieee.org</a></p>
+
+        <!-- Contact Form -->
+        <form id="contact-form" class="hidden">
+            <input type="text" id="name" placeholder="Your Name" required>
+            <input type="email" id="email" placeholder="Your Email" required>
+            <textarea id="message" placeholder="Your Message" required></textarea>
+            <button type="submit" class="btn">Send Message</button>
+        </form>
+        <p id="form-status"></p>
+    </div>
+
+    <!-- Particles.js Library -->
+    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+
+    
+
+</body>
+
+</html>
