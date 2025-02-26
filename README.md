@@ -1,4 +1,4 @@
-# 🚀 Tabitha's LinkHub | Modern & Interactive  
+# 🚀 Tabitha's | LinkHub  
 ![image](https://github.com/user-attachments/assets/6d4c1a58-f600-435a-ba70-2fbd664fe500)
 
 
