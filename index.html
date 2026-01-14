@@ -5,49 +5,536 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tabitha | LinkHub</title>
-    <link rel="stylesheet" href="style.css">
-<script defer src="script.js"></script>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" rel="stylesheet"/>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;800&display=swap" rel="stylesheet">
 
+    <style>
+        :root {
+            --primary: #8b5cf6;
+            --primary-dark: #7c3aed;
+            --secondary: #ec4899;
+            --bg-light: #f1f5f9;
+            --bg-dark: #020617;
+            --text-light: #1e293b;
+            --text-dark: #f8fafc;
+        }
 
+        body {
+            font-family: 'Outfit', sans-serif;
+            margin: 0;
+            padding: 20px;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--bg-light);
+            color: var(--text-light);
+            transition: background-color 0.5s ease, color 0.5s ease;
+            overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+        }
+
+        body.dark {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
+
+        /* --- Ambient Background Blobs --- */
+        .blob-cont {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+            pointer-events: none;
+        }
+        
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.6;
+            animation: float 10s infinite ease-in-out alternate;
+        }
+        
+        .blob-1 { top: -10%; left: -10%; width: 500px; height: 500px; background: #8b5cf6; animation-duration: 25s; }
+        .blob-2 { bottom: -10%; right: -10%; width: 400px; height: 400px; background: #ec4899; animation-duration: 30s; animation-delay: -5s;}
+        .blob-3 { top: 40%; left: 40%; width: 300px; height: 300px; background: #3b82f6; animation-duration: 20s; animation-delay: -10s;}
+
+        body.dark .blob { opacity: 0.25; }
+
+        @keyframes float {
+            0% { transform: translate(0, 0) scale(1); }
+            100% { transform: translate(30px, 50px) scale(1.1); }
+        }
+
+        #particles-js {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -1;
+        }
+
+        /* --- Glass Container (The Hub) --- */
+        .hub-container {
+            background: rgba(255, 255, 255, 0.65);
+            backdrop-filter: blur(20px) saturate(180%);
+            -webkit-backdrop-filter: blur(20px) saturate(180%);
+            padding: 3rem 2rem;
+            border-radius: 32px;
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.05),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.5);
+            text-align: center;
+            max-width: 440px;
+            width: 100%;
+            position: relative;
+            transform: translateY(0);
+            animation: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        body.dark .hub-container {
+            background: rgba(15, 23, 42, 0.6);
+            box-shadow: 
+                0 20px 40px rgba(0, 0, 0, 0.4),
+                inset 0 0 0 1px rgba(255, 255, 255, 0.1);
+        }
+
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* --- Avatar --- */
+        .avatar-container {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin: 0 auto 1.5rem;
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 4px solid rgba(255,255,255,0.8);
+            box-shadow: 0 8px 24px rgba(0,0,0,0.12);
+            object-fit: cover;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .avatar-ring {
+            position: absolute;
+            inset: -4px;
+            border-radius: 50%;
+            background: linear-gradient(45deg, var(--primary), var(--secondary));
+            z-index: 1;
+            opacity: 0.7;
+            animation: spin 8s linear infinite;
+            filter: blur(6px);
+        }
+
+        @keyframes spin { 100% { transform: rotate(360deg); } }
+
+        /* --- Typography --- */
+        h1 {
+            margin: 0.2rem 0;
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.02em;
+            background: linear-gradient(135deg, var(--text-light) 0%, #64748b 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        body.dark h1 {
+            background: linear-gradient(135deg, #fff 0%, #94a3b8 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .role {
+            margin-bottom: 2rem;
+            font-weight: 500;
+            font-size: 0.95rem;
+            color: #64748b;
+            line-height: 1.5;
+        }
+        body.dark .role { color: #94a3b8; }
+
+        /* --- Link Buttons --- */
+        .links {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            width: 100%;
+        }
+
+        .btn {
+            display: flex;
+            align-items: center;
+            padding: 16px 20px;
+            background: rgba(255, 255, 255, 0.6);
+            color: var(--text-light);
+            text-decoration: none;
+            border-radius: 18px;
+            font-weight: 600;
+            font-size: 1rem;
+            border: 1px solid rgba(255,255,255, 0.4);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.02);
+            transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+            position: relative;
+            overflow: hidden;
+            
+            /* Animation Stagger */
+            opacity: 0;
+            animation: popIn 0.5s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+        }
+
+        body.dark .btn {
+            background: rgba(30, 41, 59, 0.6);
+            color: #e2e8f0;
+            border-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .btn:hover {
+            transform: scale(1.02) translateY(-2px);
+            background: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.08);
+            border-color: rgba(139, 92, 246, 0.3);
+        }
+        
+        body.dark .btn:hover {
+            background: rgba(40, 50, 70, 0.8);
+            box-shadow: 0 12px 24px -8px rgba(0, 0, 0, 0.4);
+        }
+
+        /* Primary Button (Book a Call) */
+        .btn-primary {
+            background: linear-gradient(135deg, #8b5cf6, #ec4899) !important;
+            color: white !important;
+            border: none !important;
+            box-shadow: 0 10px 20px -5px rgba(139, 92, 246, 0.4) !important;
+            animation: popIn 0.5s forwards, pulse 2s infinite !important;
+        }
+        
+        .btn-primary:hover {
+            box-shadow: 0 15px 30px -5px rgba(139, 92, 246, 0.6) !important;
+            filter: brightness(1.1);
+        }
+
+        @keyframes pulse {
+            0% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(139, 92, 246, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(139, 92, 246, 0); }
+        }
+
+        .btn-icon {
+            font-size: 1.25rem;
+            margin-right: 16px;
+            width: 24px;
+            text-align: center;
+            transition: transform 0.3s ease;
+        }
+        
+        .btn:hover .btn-icon {
+            transform: scale(1.2) rotate(5deg);
+        }
+
+        /* Delays for staggered load */
+        .btn:nth-child(1) { animation-delay: 0.1s; }
+        .btn:nth-child(2) { animation-delay: 0.15s; }
+        .btn:nth-child(3) { animation-delay: 0.2s; }
+        .btn:nth-child(4) { animation-delay: 0.25s; }
+        .btn:nth-child(5) { animation-delay: 0.3s; }
+
+        @keyframes popIn {
+            from { opacity: 0; transform: scale(0.9); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        /* --- Theme Toggle --- */
+        #toggle-mode {
+            position: absolute;
+            top: 24px;
+            right: 24px;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(255,255,255,0.5);
+            border: 1px solid rgba(255,255,255,0.5);
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            color: var(--text-light);
+        }
+        
+        body.dark #toggle-mode {
+            background: rgba(255,255,255,0.1);
+            border-color: rgba(255,255,255,0.1);
+            color: #fbbf24;
+        }
+
+        #toggle-mode:hover {
+            transform: rotate(15deg);
+            background: #fff;
+        }
+        body.dark #toggle-mode:hover {
+            background: rgba(255,255,255,0.2);
+        }
+
+        /* --- Footer & Form --- */
+        .footer-actions {
+            margin-top: 2.5rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        #toggle-contact {
+            background: none;
+            border: none;
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: #64748b;
+            cursor: pointer;
+            letter-spacing: 0.5px;
+            text-transform: uppercase;
+            transition: color 0.3s;
+        }
+        body.dark #toggle-contact { color: #94a3b8; }
+        
+        #toggle-contact:hover { color: var(--primary); }
+
+        #contact-form {
+            width: 100%;
+            margin-top: 1rem;
+            animation: fadeIn 0.3s ease;
+        }
+
+        input, textarea {
+            width: 100%;
+            padding: 14px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(0,0,0,0.1);
+            background: rgba(255,255,255,0.8);
+            font-family: inherit;
+            outline: none;
+            transition: all 0.2s;
+        }
+        
+        body.dark input, body.dark textarea {
+            background: rgba(15, 23, 42, 0.6);
+            border-color: rgba(255,255,255,0.1);
+            color: #fff;
+        }
+
+        input:focus, textarea:focus {
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        #form-status {
+            color: #10b981;
+            font-weight: 600;
+            font-size: 0.9rem;
+            margin-top: 0.5rem;
+        }
+        
+        .hidden { display: none !important; }
+    </style>
 </head>
 
 <body>
 
+    <!-- Ambient Blobs -->
+    <div class="blob-cont">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+        <div class="blob blob-3"></div>
+    </div>
+
+    <!-- Particles Overlay -->
     <div id="particles-js"></div>
 
-    <div class="container hidden">
-        <button id="toggle-mode">🌙</button>
-        <img src="https://avatars.githubusercontent.com/tabitha-dev" alt="Tabitha Profile Picture" class="avatar">
-
-        <h1 id="greeting">Hello!</h1>
-        <p id="date"></p> <!-- Dynamic Date Display -->
-        <p>Software Developer | IEEE Member | Open Source Contributor</p>
-
-        <div class="links">
-            <a href="https://code.tabitha.dev/" target="_blank" class="btn">🌍 Portfolio</a>
-            <a href="https://code.tabitha.dev/code/index.html" target="_blank" class="btn">💻 More Projects</a>
-            <a href="https://github.com/tabitha-dev" target="_blank" class="btn">📂 GitHub</a>
-            <a href="https://www.linkedin.com/in/tabitha-dev/" target="_blank" class="btn">🔗 LinkedIn</a>
-            <a href="https://codepen.io/tabitha-dev" target="_blank" class="btn">✏️ CodePen</a>
+    <div class="hub-container">
+        <button id="toggle-mode"><i class="fas fa-moon"></i></button>
+        
+        <div class="avatar-container">
+            <div class="avatar-ring"></div>
+            <img src="https://avatars.githubusercontent.com/tabitha-dev" alt="Tabitha Profile Picture" class="avatar">
         </div>
 
-        <p class="email">📩 <a href="mailto:tabitha@ieee.org">tabitha@ieee.org</a></p>
+        <p id="date" class="text-xs font-bold text-primary opacity-80 tracking-widest uppercase mb-1"></p>
+        <h1 id="greeting">Hello!</h1>
+        <h2 class="text-xl font-bold mt-1 text-slate-700 dark:text-slate-200">Tabitha Khadse</h2>
+        <p class="role">Healthcare AI Quality Engineer | Software Developer</p>
 
-        <!-- Contact Form -->
-        <form id="contact-form" class="hidden">
-            <input type="text" id="name" placeholder="Your Name" required>
-            <input type="email" id="email" placeholder="Your Email" required>
-            <textarea id="message" placeholder="Your Message" required></textarea>
-            <button type="submit" class="btn">Send Message</button>
-        </form>
-        <p id="form-status"></p>
+        <div class="links">
+            <a href="https://code.tabitha.dev/code/Schedule-a-Meeting/index.html" target="_blank" class="btn btn-primary">
+                <span class="btn-icon">📅</span>
+                <span>Book a Call</span>
+                <i class="fas fa-chevron-right btn-arrow"></i>
+            </a>
+            
+            <a href="https://tabitha-dev.github.io/portfolio/" target="_blank" class="btn">
+                <span class="btn-icon">🌍</span>
+                <span>Portfolio Website</span>
+                <i class="fas fa-chevron-right btn-arrow"></i>
+            </a>
+            
+            <a href="https://code.tabitha.dev/code/index.html" target="_blank" class="btn">
+                <span class="btn-icon">💻</span>
+                <span>More Projects</span>
+                <i class="fas fa-chevron-right btn-arrow"></i>
+            </a>
+
+            <!-- Social Grid -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px;">
+                <a href="https://github.com/tabitha-dev" target="_blank" class="btn" style="justify-content: center; padding: 14px;">
+                    <i class="fab fa-github text-2xl"></i>
+                </a>
+                <a href="https://www.linkedin.com/in/tabitha-dev/" target="_blank" class="btn" style="justify-content: center; padding: 14px;">
+                    <i class="fab fa-linkedin-in text-2xl text-blue-500"></i>
+                </a>
+                <a href="https://codepen.io/tabitha-dev" target="_blank" class="btn" style="justify-content: center; padding: 14px;">
+                    <i class="fab fa-codepen text-2xl"></i>
+                </a>
+            </div>
+        </div>
+
+        <div class="footer-actions">
+            <a href="mailto:tabitha@ieee.org" class="text-sm font-semibold hover:text-purple-500 transition-colors flex items-center gap-2">
+                <i class="fas fa-envelope"></i> tabitha@ieee.org
+            </a>
+            
+            <button id="toggle-contact">Send a Message</button>
+            
+            <form id="contact-form" class="hidden">
+                <input type="text" id="name" placeholder="Name" required>
+                <input type="email" id="email" placeholder="Email" required>
+                <textarea id="message" placeholder="How can I help you?" rows="3" required></textarea>
+                <button type="submit" class="btn btn-primary" style="justify-content: center; margin-top: 5px; width: 100%;">Send</button>
+            </form>
+            <p id="form-status"></p>
+        </div>
     </div>
 
     <!-- Particles.js Library -->
-    <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
-    
+    <script>
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+            updateDate();
+            updateGreeting();
+            initParticles();
+            checkTheme();
+        });
+
+        // --- Date & Greeting Logic ---
+        function updateDate() {
+            const dateEl = document.getElementById('date');
+            const now = new Date();
+            dateEl.textContent = now.toLocaleDateString('en-US', { weekday: 'short', month: 'long', day: 'numeric' });
+        }
+
+        function updateGreeting() {
+            const greetingEl = document.getElementById('greeting');
+            const hour = new Date().getHours();
+            let greeting = "Hello!";
+            if (hour < 12) greeting = "Good Morning";
+            else if (hour < 18) greeting = "Good Afternoon";
+            else greeting = "Good Evening";
+            greetingEl.textContent = greeting;
+        }
+
+        // --- Dark Mode Logic ---
+        const toggleBtn = document.getElementById('toggle-mode');
+        const body = document.body;
+        const icon = toggleBtn.querySelector('i');
+
+        function checkTheme() {
+            if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+                body.classList.add('dark');
+                icon.className = 'fas fa-sun';
+            } else {
+                body.classList.remove('dark');
+                icon.className = 'fas fa-moon';
+            }
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            body.classList.toggle('dark');
+            const isDark = body.classList.contains('dark');
+            icon.className = isDark ? 'fas fa-sun' : 'fas fa-moon';
+            localStorage.theme = isDark ? 'dark' : 'light';
+        });
+
+        // --- Contact Form Logic ---
+        const contactToggle = document.getElementById('toggle-contact');
+        const contactForm = document.getElementById('contact-form');
+        const formStatus = document.getElementById('form-status');
+
+        contactToggle.addEventListener('click', () => {
+            contactForm.classList.toggle('hidden');
+            contactToggle.textContent = contactForm.classList.contains('hidden') ? 'Send a Message' : 'Close Form';
+        });
+
+        contactForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            const btn = contactForm.querySelector('button[type="submit"]');
+            const originalText = btn.textContent;
+            
+            btn.textContent = 'Sending...';
+            btn.disabled = true;
+
+            // Mock submission
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.disabled = false;
+                contactForm.reset();
+                contactForm.classList.add('hidden');
+                contactToggle.textContent = 'Send a Message';
+                formStatus.textContent = "Message sent successfully!";
+                setTimeout(() => formStatus.textContent = '', 3000);
+            }, 1500);
+        });
+
+        // --- Particles.js Configuration ---
+        function initParticles() {
+            particlesJS('particles-js', {
+                "particles": {
+                    "number": { "value": 40, "density": { "enable": true, "value_area": 800 } },
+                    "color": { "value": "#8b5cf6" },
+                    "shape": { "type": "circle" },
+                    "opacity": { "value": 0.3, "random": true },
+                    "size": { "value": 2, "random": true },
+                    "line_linked": { "enable": true, "distance": 150, "color": "#8b5cf6", "opacity": 0.15, "width": 1 },
+                    "move": { "enable": true, "speed": 0.8, "direction": "none", "random": false, "out_mode": "out" }
+                },
+                "interactivity": {
+                    "detect_on": "canvas",
+                    "events": { "onhover": { "enable": true, "mode": "grab" }, "onclick": { "enable": true, "mode": "push" } },
+                    "modes": { "grab": { "distance": 140, "line_linked": { "opacity": 0.4 } } }
+                },
+                "retina_detect": true
+            });
+        }
+    </script>
 
 </body>
-
 </html>
